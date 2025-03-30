@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import "./A4Form.css";
+import logo from "./assets/conicalFlask.png";
 
 const A4Form = () => {
   const formRef = useRef();
@@ -25,156 +27,86 @@ const A4Form = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "flex-start",
-        background: "black",
-        padding: "20px",
-      }}
-    >
-      <div
-        ref={formRef}
-        style={{
-          width: "210mm",
-          height: "297mm",
-          background: "white",
-          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          padding: "5mm",
-          boxSizing: "border-box",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            background: "white",
-            border: "2px solid #301934",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-              background: "blue",
-            }}
-          >
-            <div style={{ textAlign: "left" }}>Left Content</div>
-            <div style={{ flex: 1, textAlign: "center" }}>Center Content</div>
-            <div style={{ textAlign: "right" }}>Right Content</div>
+    <div className="a4-form-container">
+      <div ref={formRef} className="a4-form">
+        <div className="a4-border-box">
+          <div className="header">
+            <div>GSTIN : 23BQOPS2199M2ZZ</div>
+            <div className="header-center">
+              <div>"श्री"</div>
+              <div className="quotation">Quotation</div>
+            </div>
+            <div className="header-right">
+              <div>📞 : 9340120216</div>
+              <div>📞 : 9343477532</div>
+              <div>shreescientificcenter@gmail.com</div>
+            </div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-              background: "yellow",
-            }}
-          >
-            <div style={{ textAlign: "left" }}>Left Content</div>
-            <div style={{ flex: 1, textAlign: "center" }}>Center Content</div>
-            <div style={{ textAlign: "right" }}>Right Content</div>
+          <div className="logoContainer">
+            <div>
+              <img src={logo} alt="Logo" width="100" height="110" />
+            </div>
+            <div>
+              <div className="noto-sans-gunjala-gondi-logo">
+                SHREE SCIENTIFIC CENTER
+              </div>
+              <div className="address">
+                In front of Kedar Plaza, Near Holy Home School, Prem Nagar,
+                Balaghat, - 481001 (M.P.)
+              </div>
+              <div className="description">
+                (Chemicals, Instruments, Glass wares, Fire Apparatus, Science
+                Models, Sports, Scout & Redcross Material & General Order
+                Suppliers )
+              </div>
+            </div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-              background: "red",
-            }}
-          >
-            <div style={{ textAlign: "left" }}>Left Content</div>
-            <div style={{ flex: 1, textAlign: "center" }}>Center Content</div>
-          </div>
+          {/* <div className="section section-green">
+            <div>Left Content</div>
+            <div>Right Content</div>
+          </div> */}
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-              background: "green",
-            }}
-          >
-            <div style={{ flex: 1 }}>Left Content</div>
-            <div style={{ flex: 1 }}>Right Content</div>
-          </div>
-
-          <div>
+          {/* <div>
             Dear Sir, We thank you for esteemed enquiry & have pleasure in
             quoting you as under :
-          </div>
+          </div> */}
 
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              textAlign: "left",
-            }}
-            border="1"
-          >
+          {/* <table className="table-container">
             <thead>
               <tr>
-                <th style={{ padding: "8px" }}>S.No</th>
-                <th style={{ padding: "8px" }}>Description of Item</th>
-                <th style={{ padding: "8px" }}>Per Unit</th>
-                <th style={{ padding: "8px" }}>Rate</th>
+                <th>S.No</th>
+                <th>Description of Item</th>
+                <th>Per Unit</th>
+                <th>Rate</th>
               </tr>
             </thead>
             <tbody>
               {[...Array(25)].map((_, index) => (
                 <tr key={index}>
-                  <td style={{ padding: "8px", textAlign: "center" }}>
-                    {index + 1}
+                  <td style={{ textAlign: "center" }}>{index + 1}</td>
+                  <td>
+                    <input type="text" className="input-box" />
                   </td>
-                  <td style={{ padding: "8px" }}>
-                    <input
-                      type="text"
-                      style={{ width: "100%", outline: "none", border: "none" }}
-                    />
+                  <td>
+                    <input type="text" className="input-box" />
                   </td>
-                  <td style={{ padding: "8px" }}>
-                    <input
-                      type="text"
-                      style={{ width: "100%", outline: "none", border: "none" }}
-                    />
-                  </td>
-                  <td style={{ padding: "8px" }}>
-                    <input
-                      type="text"
-                      style={{ width: "100%", outline: "none", border: "none" }}
-                    />
+                  <td>
+                    <input type="text" className="input-box" />
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table> */}
         </div>
       </div>
 
-      <div style={{ marginLeft: "20px" }}>
+      <div className="button-container">
         <button
           id="download-button"
           onClick={handleDownloadPDF}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            background: "#007bff",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-            borderRadius: "5px",
-          }}
+          className="download-button"
         >
           Download PDF
         </button>

@@ -1,0 +1,152 @@
+/* A4Form.css */
+* {
+  font-family: "Roboto", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  color: #441074;
+}
+
+.a4-form-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.a4-form {
+  width: 210mm;
+  height: 297mm;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 5mm;
+  box-sizing: border-box;
+}
+
+.a4-border-box {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: 2px solid #441074;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  padding: 5px 10px;
+  box-sizing: border-box;
+}
+
+.header div {
+  flex: 1;
+}
+
+.header-center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header-right {
+  text-align: right;
+}
+
+.section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.section-red {
+  background: red;
+}
+
+.section-green {
+  background: green;
+}
+
+.table-container {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table-container th,
+.table-container td {
+  padding: 8px;
+  border: 1px solid black;
+}
+
+.input-box {
+  width: 100%;
+  outline: none;
+  border: none;
+}
+
+.button-container {
+  margin-left: 20px;
+}
+
+.download-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #441074;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.quotation {
+  color: white;
+  background: #ed1c24;
+  border-radius: 20px;
+  font-size: 15px;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 5px 15px;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.companyLogo {
+  color: #ed1c24;
+  text-transform: uppercase;
+}
+
+.noto-sans-gunjala-gondi-logo {
+  font-family: "Noto Sans Gunjala Gondi", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 50px;
+  white-space: nowrap;
+  text-align: center;
+  width: 100%;
+  align-self: flex-start;
+  color: #ed1c24;
+  -webkit-text-stroke: 0.5px black;
+}
+
+.logoContainer {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 2px solid #441074;
+}
+
+.address {
+  font-size: 16px;
+}
+
+.description {
+  color: black;
+  font-size: 10px;
+  white-space: nowrap;
+  text-align: center;
+}
