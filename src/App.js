@@ -63,17 +63,17 @@ const A4Form = () => {
             </div>
           </div>
 
-          {/* <div className="section section-green">
+          <div className="section section-green">
             <div>Left Content</div>
             <div>Right Content</div>
-          </div> */}
+          </div>
 
-          {/* <div>
+          <div>
             Dear Sir, We thank you for esteemed enquiry & have pleasure in
             quoting you as under :
-          </div> */}
+          </div>
 
-          {/* <table className="table-container">
+          <table className="table-container">
             <thead>
               <tr>
                 <th>S.No</th>
@@ -98,7 +98,7 @@ const A4Form = () => {
                 </tr>
               ))}
             </tbody>
-          </table> */}
+          </table>
         </div>
       </div>
 
