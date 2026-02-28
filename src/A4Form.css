@@ -1,152 +1,306 @@
-/* A4Form.css */
+/* A4Form.css - Clean Professional Bill Design */
 * {
-  font-family: "Roboto", sans-serif;
-  font-size: 12px;
-  font-weight: 900;
-  color: #441074;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .a4-form-container {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 20px;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  background: #f8f9fa;
+  min-height: 100vh;
 }
 
 .a4-form {
   width: 210mm;
-  height: 297mm;
+  min-height: 297mm;
   background: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 5mm;
-  box-sizing: border-box;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  border: 8px solid #9c0f0f;
 }
 
-.a4-border-box {
+.bill-container {
   width: 100%;
   height: 100%;
-  background: white;
-  border: 2px solid #441074;
+  padding: 18px 24px 30px;
+  font-family: "Arial", "Helvetica", sans-serif;
+  font-size: 13px;
+  color: #1a1a1a;
+  position: relative;
 }
 
+/* Header */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  padding: 5px 10px;
-  box-sizing: border-box;
-}
-
-.header div {
-  flex: 1;
-}
-
-.header-center {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
   align-items: center;
+  border-bottom: 4px solid #9c0f0f;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.logo-section img.beaker-logo {
+  width: 78px;
+  height: 78px;
+}
+
+.company-center {
+  text-align: center;
+  flex: 1;
+  padding: 0 15px;
+}
+
+.company-name {
+  font-size: 34px;
+  font-weight: 900;
+  color: #9c0f0f;
+  letter-spacing: -1px;
+}
+
+.tagline {
+  font-size: 11px;
+  color: #444;
+  margin-top: 2px;
+}
+
+.bill-type {
+  font-size: 21px;
+  font-weight: 900;
+  color: #9c0f0f;
+  border: 3px solid #9c0f0f;
+  display: inline-block;
+  padding: 3px 22px;
+  margin-top: 6px;
 }
 
 .header-right {
   text-align: right;
+  font-size: 12px;
 }
 
-.section {
+.gst-box {
+  background: #9c0f0f;
+  color: white;
+  padding: 6px 12px;
+  font-weight: bold;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+/* Bill To Row */
+.bill-to-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  margin-bottom: 18px;
+}
+
+.bill-to {
+  flex: 1;
+}
+
+.label {
+  font-weight: bold;
+  color: #9c0f0f;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.bill-to-input {
   width: 100%;
+  border: 1px solid #9c0f0f;
+  padding: 6px 10px;
+  font-size: 13px;
+  margin-bottom: 6px;
 }
 
-.section-red {
-  background: red;
+.school {
+  font-weight: 600;
 }
 
-.section-green {
-  background: green;
+.invoice-info {
+  text-align: right;
+  font-size: 12.5px;
 }
 
-.table-container {
+.invoice-info > div {
+  margin-bottom: 6px;
+}
+
+.small-input {
+  width: 110px;
+  border: 1px solid #9c0f0f;
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.order-input {
+  width: 160px;
+  border: 1px solid #9c0f0f;
+  padding: 4px 8px;
+}
+
+/* Table */
+.bill-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  margin-bottom: 12px;
 }
 
-.table-container th,
-.table-container td {
-  padding: 8px;
-  border: 1px solid black;
+.bill-table th {
+  background: #9c0f0f;
+  color: white;
+  font-weight: 700;
+  padding: 9px 6px;
+  font-size: 12.5px;
+  text-transform: uppercase;
 }
 
-.input-box {
+.bill-table td {
+  border: 1px solid #9c0f0f;
+  padding: 6px 8px;
+  vertical-align: middle;
+  height: 32px;
+}
+
+.sno {
+  width: 45px;
+  text-align: center;
+}
+
+.desc {
+  width: 48%;
+}
+.qty {
+  width: 9%;
+}
+.rate,
+.amount {
+  width: 13%;
+}
+
+.sno-cell {
+  text-align: center;
+  font-weight: 700;
+  color: #9c0f0f;
+}
+
+.editable {
   width: 100%;
-  outline: none;
   border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
 }
 
+/* Totals */
+.totals-section {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.totals {
+  width: 320px;
+  border: 2px solid #9c0f0f;
+  padding: 10px 14px;
+}
+
+.totals-labels {
+  float: left;
+  text-align: right;
+  width: 130px;
+  font-weight: 600;
+}
+
+.totals-values {
+  float: right;
+  text-align: right;
+  width: 160px;
+  font-weight: 600;
+}
+
+.grand,
+.grand-value {
+  font-size: 15px;
+  font-weight: 900;
+  color: #9c0f0f;
+  padding-top: 6px;
+}
+
+/* Bank & Terms */
+.bank-details {
+  position: absolute;
+  bottom: 108px;
+  left: 24px;
+  width: 240px;
+  border: 2px solid #9c0f0f;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.bank-title {
+  font-weight: 900;
+  margin-bottom: 6px;
+  color: #9c0f0f;
+}
+
+.terms-section {
+  position: absolute;
+  bottom: 108px;
+  right: 24px;
+  width: 300px;
+  font-size: 11.5px;
+}
+
+.terms-title {
+  font-weight: 900;
+  color: #9c0f0f;
+  margin-bottom: 6px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.thank-you {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.watermark {
+  font-size: 10px;
+  color: #9c0f0f;
+  opacity: 0.6;
+  letter-spacing: 3px;
+}
+
+/* Button */
 .button-container {
-  margin-left: 20px;
+  margin-top: 40px;
 }
 
 .download-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background: #441074;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.quotation {
+  padding: 16px 40px;
+  font-size: 18px;
+  background: #9c0f0f;
   color: white;
-  background: #ed1c24;
-  border-radius: 20px;
-  font-size: 15px;
-  text-transform: uppercase;
-  font-weight: 500;
-  padding: 5px 15px;
-  display: inline-block;
-  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(156, 15, 15, 0.3);
 }
 
-.companyLogo {
-  color: #ed1c24;
-  text-transform: uppercase;
-}
-
-.noto-sans-gunjala-gondi-logo {
-  font-family: "Noto Sans Gunjala Gondi", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-  font-weight: 900;
-  font-size: 50px;
-  white-space: nowrap;
-  text-align: center;
-  width: 100%;
-  align-self: flex-start;
-  color: #ed1c24;
-  -webkit-text-stroke: 0.5px black;
-}
-
-.logoContainer {
-  display: flex;
-  flex-direction: row;
-  border-bottom: 2px solid #441074;
-}
-
-.address {
-  font-size: 16px;
-}
-
-.description {
-  color: black;
-  font-size: 10px;
-  white-space: nowrap;
-  text-align: center;
+.download-button:hover {
+  background: #b22222;
 }
