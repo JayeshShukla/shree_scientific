@@ -6,6 +6,7 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
+import A4Form from "./A4Form";
 
 // --- SHARED COMPONENTS ---
 
@@ -263,6 +264,7 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/shree" element={<A4Form />} />
       </Routes>
     </Router>
   );
