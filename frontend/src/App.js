@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -83,25 +83,48 @@ const LandingPage = () => (
 
 const UserLogin = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const response = await fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        navigate("/dashboard");
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError("Failed to connect to server");
+    }
+  };
+
   return (
     <AuthLayout title="User Login" subtitle="Access your customer portal">
-      <form
-        className="space-y-5"
-        onSubmit={(e) => {
-          e.preventDefault();
-          navigate("/dashboard");
-        }}
-      >
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         <input
           type="email"
           placeholder="Email"
           className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-indigo-500"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
           type="password"
           placeholder="Password"
           className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-indigo-500"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
         <button className="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg">
@@ -148,31 +171,81 @@ const AdminLogin = () => {
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName, lastName, email, password }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        navigate("/login");
+      } else {
+        setError(data.message || "Signup failed");
+      }
+    } catch (err) {
+      setError("Failed to connect to server");
+    }
+  };
+
   return (
     <AuthLayout title="Register" subtitle="Create your professional account">
-      <form
-        className="space-y-5"
-        onSubmit={(e) => {
-          e.preventDefault();
-          navigate("/login");
-        }}
-      >
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         <div className="grid grid-cols-2 gap-4">
           <input
             type="text"
             placeholder="First Name"
             className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
           />
           <input
             type="text"
             placeholder="Last Name"
             className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
           />
         </div>
         <input
           type="email"
           placeholder="Work Email"
           className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
         <button className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-black transition">
