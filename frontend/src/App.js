@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,12 +25,6 @@ const Navbar = () => (
       <div className="flex items-center gap-6">
         <Link to="/catalog" className="text-sm font-bold text-slate-600 hover:text-indigo-600 transition">
           Browse Catalog
-        </Link>
-        <Link
-          to="/admin-login"
-          className="bg-slate-900 text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-slate-800 transition shadow-lg"
-        >
-          Admin Login
         </Link>
       </div>
     </div>
@@ -104,6 +98,7 @@ const UserLogin = () => {
       });
       const data = await response.json();
       if (response.ok && data.success) {
+        localStorage.setItem("userToken", data.token);
         navigate("/dashboard");
       } else {
         setError(data.message || "Login failed");
@@ -141,39 +136,7 @@ const UserLogin = () => {
   );
 };
 
-const AdminLogin = () => {
-  const navigate = useNavigate();
-  return (
-    <AuthLayout title="Admin Access" subtitle="Internal Management Only">
-      <form
-        className="space-y-5"
-        onSubmit={(e) => {
-          e.preventDefault();
-          navigate("/admin-dashboard");
-        }}
-      >
-        <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg text-xs text-amber-700 mb-4 font-medium">
-          ⚠️ This area is restricted to Shree Scientific staff and family.
-        </div>
-        <input
-          type="email"
-          placeholder="Admin Email"
-          className="w-full px-4 py-3 rounded-xl border border-slate-900 bg-slate-50 outline-none"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Master Password"
-          className="w-full px-4 py-3 rounded-xl border border-slate-900 bg-slate-50 outline-none"
-          required
-        />
-        <button className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-black transition shadow-lg">
-          Verify & Enter
-        </button>
-      </form>
-    </AuthLayout>
-  );
-};
+// AdminLogin has been removed. Administration is now handled in a separate service.
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -321,6 +284,19 @@ const Signup = () => {
 
 const UserDashboard = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userToken");
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <div className="w-64 bg-slate-900 text-slate-400 p-6 flex flex-col gap-4">
@@ -340,8 +316,8 @@ const UserDashboard = () => {
           Support
         </div>
         <button
-          onClick={() => navigate("/")}
-          className="mt-auto p-3 text-red-400 font-bold text-left"
+          onClick={handleLogout}
+          className="mt-auto p-3 text-red-400 font-bold text-left hover:text-red-300 transition"
         >
           Logout
         </button>
@@ -362,44 +338,7 @@ const UserDashboard = () => {
   );
 };
 
-const AdminDashboard = () => {
-  const navigate = useNavigate();
-  return (
-    <div className="min-h-screen bg-indigo-900 flex text-white font-sans">
-      <div className="w-72 bg-black/30 backdrop-blur-lg border-r border-white/10 p-8 flex flex-col">
-        <div className="text-2xl font-black mb-12 tracking-tighter">
-          SSC ADMIN
-        </div>
-        <div className="space-y-4">
-          <div className="bg-white/10 p-4 rounded-2xl font-bold">
-            Master Control
-          </div>
-          <div className="p-4 opacity-60 hover:opacity-100 cursor-pointer">
-            All Accounts
-          </div>
-          <div className="p-4 opacity-60 hover:opacity-100 cursor-pointer">
-            System Logs
-          </div>
-        </div>
-        <button
-          onClick={() => navigate("/")}
-          className="mt-auto bg-red-500/20 text-red-300 p-4 rounded-2xl font-bold"
-        >
-          Exit Console
-        </button>
-      </div>
-      <div className="flex-1 p-16">
-        <h1 className="text-4xl font-black mb-4">Command Center</h1>
-        <p className="opacity-50">
-          Welcome back, Admin. System is operational.
-        </p>
-        <div className="mt-12 h-64 border-2 border-dashed border-white/20 rounded-[3rem] flex items-center justify-center italic opacity-30">
-          Family Management Data
-        </div>
-      </div>
-    </div>
-  );
-};
+// AdminDashboard is now imported from "./AdminDashboard"
 
 // --- MAIN ROUTER ---
 
@@ -409,10 +348,8 @@ const App = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<UserLogin />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<UserDashboard />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/shree" element={<A4Form />} />
         <Route path="/catalog" element={<Catalog />} />
       </Routes>
