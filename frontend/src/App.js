@@ -7,6 +7,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import A4Form from "./A4Form";
+import Catalog from "./Catalog";
 
 // --- SHARED COMPONENTS ---
 
@@ -14,19 +15,24 @@ const Navbar = () => (
   <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
     <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <Link to="/" className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow">
           SS
         </div>
-        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600">
+        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-indigo-600">
           Shree Scientific Center
         </span>
       </Link>
-      <Link
-        to="/admin-login"
-        className="bg-slate-900 text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-slate-800 transition shadow-lg"
-      >
-        Admin Login
-      </Link>
+      <div className="flex items-center gap-6">
+        <Link to="/catalog" className="text-sm font-bold text-slate-600 hover:text-indigo-600 transition">
+          Browse Catalog
+        </Link>
+        <Link
+          to="/admin-login"
+          className="bg-slate-900 text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-slate-800 transition shadow-lg"
+        >
+          Admin Login
+        </Link>
+      </div>
     </div>
   </nav>
 );
@@ -176,6 +182,10 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [schoolName, setSchoolName] = useState("");
+  const [schoolCity, setSchoolCity] = useState("");
+  const [schoolBoard, setSchoolBoard] = useState("");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -191,7 +201,16 @@ const Signup = () => {
       const response = await fetch("http://localhost:8080/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, password }),
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+          schoolName,
+          schoolCity,
+          schoolBoard,
+          phone,
+        }),
       });
       const data = await response.json();
       if (response.ok && data.success) {
@@ -205,50 +224,92 @@ const Signup = () => {
   };
 
   return (
-    <AuthLayout title="Register" subtitle="Create your professional account">
-      <form className="space-y-5" onSubmit={handleSubmit}>
+    <AuthLayout title="Register School" subtitle="Create your school administrator account">
+      <form className="space-y-4" onSubmit={handleSubmit}>
         {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         <div className="grid grid-cols-2 gap-4">
           <input
             type="text"
             placeholder="First Name"
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
           />
           <input
             type="text"
             placeholder="Last Name"
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
           />
         </div>
         <input
           type="email"
-          placeholder="Work Email"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
+          placeholder="Work Email Address"
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <button className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-black transition">
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            placeholder="School Name"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm"
+            value={schoolName}
+            onChange={(e) => setSchoolName(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="School City"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm"
+            value={schoolCity}
+            onChange={(e) => setSchoolCity(e.target.value)}
+            required
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <select
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none bg-white text-slate-700 text-sm"
+            value={schoolBoard}
+            onChange={(e) => setSchoolBoard(e.target.value)}
+            required
+          >
+            <option value="">Select Board</option>
+            <option value="CBSE">CBSE</option>
+            <option value="ICSE">ICSE</option>
+            <option value="State Board">State Board</option>
+            <option value="Other">Other</option>
+          </select>
+          <input
+            type="tel"
+            placeholder="Phone Number"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Confirm"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-black transition text-sm">
           Create Account
         </button>
       </form>
@@ -266,7 +327,13 @@ const UserDashboard = () => {
         <div className="text-white font-bold mb-8 text-xl flex items-center gap-2">
           User Portal
         </div>
-        <div className="bg-slate-800 text-white p-3 rounded-lg">
+        <button
+          onClick={() => navigate("/catalog")}
+          className="bg-indigo-600 text-white p-3 rounded-lg font-bold text-left hover:bg-indigo-700 transition"
+        >
+          Browse Product Catalog
+        </button>
+        <div className="bg-slate-800 text-white p-3 rounded-lg cursor-pointer">
           My Invoices
         </div>
         <div className="p-3 hover:bg-slate-800 rounded-lg cursor-pointer">
@@ -274,13 +341,22 @@ const UserDashboard = () => {
         </div>
         <button
           onClick={() => navigate("/")}
-          className="mt-auto p-3 text-red-400 font-bold"
+          className="mt-auto p-3 text-red-400 font-bold text-left"
         >
           Logout
         </button>
       </div>
-      <div className="flex-1 p-12 flex items-center justify-center text-slate-400">
-        User Dashboard Area
+      <div className="flex-1 p-12 flex flex-col items-center justify-center text-center">
+        <h2 className="text-3xl font-black text-slate-850 mb-4">Welcome to Shree Scientific Center</h2>
+        <p className="text-slate-400 max-w-md mb-8 text-sm">
+          Browse our full list of scientific lab equipment and request custom quotations directly for your school.
+        </p>
+        <button
+          onClick={() => navigate("/catalog")}
+          className="bg-indigo-600 text-white font-bold px-8 py-3 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-100"
+        >
+          Go to Product Catalog
+        </button>
       </div>
     </div>
   );
@@ -338,6 +414,7 @@ const App = () => {
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/shree" element={<A4Form />} />
+        <Route path="/catalog" element={<Catalog />} />
       </Routes>
     </Router>
   );
