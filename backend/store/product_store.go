@@ -39,3 +39,24 @@ func (s *ProductStore) GetProducts(search, category, subject, grade string) ([]m
 func (s *ProductStore) AddProduct(product models.Product) error {
 	return s.db.Create(&product).Error
 }
+
+func (s *ProductStore) UpdateProduct(id uint, updatedProduct models.Product) error {
+	var product models.Product
+	if err := s.db.First(&product, id).Error; err != nil {
+		return err
+	}
+	product.Name = updatedProduct.Name
+	product.Category = updatedProduct.Category
+	product.Price = updatedProduct.Price
+	product.Image = updatedProduct.Image
+	product.Description = updatedProduct.Description
+	product.Stock = updatedProduct.Stock
+	product.Grade = updatedProduct.Grade
+	product.Subject = updatedProduct.Subject
+	return s.db.Save(&product).Error
+}
+
+func (s *ProductStore) DeleteProduct(id uint) error {
+	return s.db.Delete(&models.Product{}, id).Error
+}
+

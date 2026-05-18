@@ -3,8 +3,11 @@ package handlers
 import (
 	"backend/models"
 	"backend/store"
-	"github.com/gofiber/fiber/v2"
 	"log"
+	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthHandler struct {
@@ -46,6 +49,22 @@ func (h *AuthHandler) LoginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(models.Response{Message: "Invalid email or password", Success: false})
 	}
 
+	// Generate JWT signed token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"email": req.Email,
+		"exp":   time.Now().Add(time.Hour * 24).Unix(), // Expires in 24 hours
+	})
+
+	tokenString, err := token.SignedString([]byte(JWTSecret))
+	if err != nil {
+		log.Printf("Error signing JWT token: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(models.Response{Message: "Error generating token", Success: false})
+	}
+
 	log.Printf("User logged in successfully: %s", req.Email)
-	return c.Status(fiber.StatusOK).JSON(models.Response{Message: "Login successful", Success: true})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "Login successful",
+		"token":   tokenString,
+	})
 }

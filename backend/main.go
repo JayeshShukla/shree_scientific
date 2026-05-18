@@ -5,6 +5,7 @@ import (
 	"backend/models"
 	"backend/store"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -43,11 +44,23 @@ func main() {
 	productStore := store.NewProductStore(db)
 	productHandler := handlers.NewProductHandler(productStore)
 
+	// 4. Ensure uploads folder exists and serve static uploads
+	if err := os.MkdirAll("./uploads", 0755); err != nil {
+		log.Printf("⚠️ Warning: Failed to create uploads directory: %v", err)
+	}
+	app.Static("/uploads", "./uploads")
+
 	app.Post("/api/signup", authHandler.SignupHandler)
 	app.Post("/api/login", authHandler.LoginHandler)
 
+	// Public catalog route
 	app.Get("/api/products", productHandler.GetProductsHandler)
-	app.Post("/api/products", productHandler.AddProductHandler)
+
+	// Protected catalog management routes
+	app.Post("/api/products", handlers.JWTMiddleware, productHandler.AddProductHandler)
+	app.Put("/api/products/:id", handlers.JWTMiddleware, productHandler.UpdateProductHandler)
+	app.Delete("/api/products/:id", handlers.JWTMiddleware, productHandler.DeleteProductHandler)
+	app.Post("/api/upload", handlers.JWTMiddleware, productHandler.UploadImageHandler)
 
 	log.Fatal(app.Listen(":8080"))
 }
