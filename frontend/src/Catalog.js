@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Catalog = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -16,6 +17,7 @@ const Catalog = () => {
   const [bag, setBag] = useState([]);
   const [isBagOpen, setIsBagOpen] = useState(false);
   const [inquirySuccess, setInquirySuccess] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
 
   // Fetch products from backend
   const fetchProducts = async () => {
@@ -63,14 +65,47 @@ const Catalog = () => {
     }
   };
 
-  const handleSendInquiry = (e) => {
+  const handleSendInquiry = async (e) => {
     e.preventDefault();
-    setInquirySuccess(true);
-    setTimeout(() => {
-      setBag([]);
-      setIsBagOpen(false);
-      setInquirySuccess(false);
-    }, 3000);
+    setCheckoutError("");
+
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      alert("Please login or register to request a quotation and generate an invoice.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          items: bag.map((item) => ({
+            productId: item.id || item.ID,
+            quantity: 1, // Default quantity
+          })),
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setInquirySuccess(true);
+        setTimeout(() => {
+          setBag([]);
+          setIsBagOpen(false);
+          setInquirySuccess(false);
+          navigate("/shree", { state: { order: data.order } });
+        }, 1500);
+      } else {
+        setCheckoutError(data.message || "Failed to process quote inquiry");
+      }
+    } catch (err) {
+      setCheckoutError("Failed to connect to backend server");
+    }
   };
 
   // Colors for subjects
@@ -393,30 +428,16 @@ const Catalog = () => {
                   </div>
                 ) : (
                   <form onSubmit={handleSendInquiry} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                        School Name
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Balaghat Public School"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:bg-white focus:border-indigo-500 transition"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                        Contact Email / Phone
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. principal@school.com"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:bg-white focus:border-indigo-500 transition"
-                        required
-                      />
-                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      By submitting, this official quotation will be registered in your account and automatically sent to your school's registered email.
+                    </p>
+                    {checkoutError && (
+                      <div className="bg-red-50 text-red-600 p-2.5 rounded-xl border border-red-100 text-center text-xs font-semibold">
+                        {checkoutError}
+                      </div>
+                    )}
                     <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition text-xs shadow-lg shadow-indigo-100">
-                      Submit Official Quote Request
+                      Submit Official Quote Request & Generate Invoice
                     </button>
                   </form>
                 )}

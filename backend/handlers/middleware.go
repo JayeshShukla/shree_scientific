@@ -52,5 +52,6 @@ func JWTMiddleware(c *fiber.Ctx) error {
 
 	// Store claims in context locals
 	c.Locals("email", claims["email"])
+	c.Locals("customerId", claims["customerId"])
 	return c.Next()
 }

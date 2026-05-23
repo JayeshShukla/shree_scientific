@@ -19,21 +19,21 @@ func NewAuthHandler(store *store.UserStore) *AuthHandler {
 }
 
 func (h *AuthHandler) SignupHandler(c *fiber.Ctx) error {
-	var user models.User
-	if err := c.BodyParser(&user); err != nil {
+	var req models.SignupRequest
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(models.Response{Message: "Invalid input", Success: false})
 	}
 
-	if user.Email == "" || user.Password == "" {
+	if req.Email == "" || req.Password == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(models.Response{Message: "Email and password are required", Success: false})
 	}
 
-	if !h.Store.AddUser(user) {
-		log.Printf("Signup failed: User already exists -> %s", user.Email)
+	if !h.Store.AddUser(req) {
+		log.Printf("Signup failed: User already exists -> %s", req.Email)
 		return c.Status(fiber.StatusConflict).JSON(models.Response{Message: "User already exists", Success: false})
 	}
 
-	log.Printf("User signed up successfully: %s", user.Email)
+	log.Printf("User signed up successfully: %s", req.Email)
 	return c.Status(fiber.StatusCreated).JSON(models.Response{Message: "User created successfully", Success: true})
 }
 
@@ -49,10 +49,11 @@ func (h *AuthHandler) LoginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(models.Response{Message: "Invalid email or password", Success: false})
 	}
 
-	// Generate JWT signed token
+	// Generate JWT signed token containing customerId
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": req.Email,
-		"exp":   time.Now().Add(time.Hour * 24).Unix(), // Expires in 24 hours
+		"email":      req.Email,
+		"customerId": user.CustomerID,
+		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Expires in 24 hours
 	})
 
 	tokenString, err := token.SignedString([]byte(JWTSecret))

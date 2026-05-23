@@ -16,13 +16,43 @@ func NewUserStore(db *gorm.DB) *UserStore {
 	}
 }
 
-func (s *UserStore) AddUser(user models.User) bool {
-	result := s.db.Create(&user)
-	if result.Error != nil {
-		log.Printf("❌ [STORE] Error adding user: %v", result.Error)
+func (s *UserStore) AddUser(req models.SignupRequest) bool {
+	err := s.db.Transaction(func(tx *gorm.DB) error {
+		customerID := models.GenerateCustomerID()
+
+		user := models.User{
+			CustomerID: customerID,
+			Email:      req.Email,
+			Password:   req.Password,
+		}
+
+		if err := tx.Create(&user).Error; err != nil {
+			return err
+		}
+
+		profile := models.SchoolProfile{
+			CustomerID:  customerID,
+			FirstName:   req.FirstName,
+			LastName:    req.LastName,
+			SchoolName:  req.SchoolName,
+			SchoolCity:  req.SchoolCity,
+			SchoolBoard: req.SchoolBoard,
+			Phone:       req.Phone,
+		}
+
+		if err := tx.Create(&profile).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		log.Printf("❌ [STORE] Error registering user: %v", err)
 		return false
 	}
-	log.Printf("🔥 [STORE] User added to DB: %s", user.Email)
+
+	log.Printf("🔥 [STORE] User registered successfully: %s", req.Email)
 	return true
 }
 
@@ -33,4 +63,13 @@ func (s *UserStore) GetUser(email string) (models.User, bool) {
 		return user, false
 	}
 	return user, true
+}
+
+func (s *UserStore) GetSchoolProfile(customerID string) (models.SchoolProfile, bool) {
+	var profile models.SchoolProfile
+	result := s.db.Where("customer_id = ?", customerID).First(&profile)
+	if result.Error != nil {
+		return profile, false
+	}
+	return profile, true
 }
