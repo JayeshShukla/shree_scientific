@@ -1,7 +1,7 @@
 package database
 
 import (
-	"backend/models"
+	"admin-backend/models"
 	"log"
 
 	"github.com/glebarez/sqlite"
@@ -17,7 +17,7 @@ func InitDB() *gorm.DB {
 		log.Fatal("❌ failed to connect database:", err)
 	}
 
-	log.Println("🔌 Connected to SQLite successfully")
+	log.Println("🔌 Connected to shared SQLite successfully (Admin-Backend)")
 
 	// Auto Migrate models
 	err = DB.AutoMigrate(
@@ -31,10 +31,10 @@ func InitDB() *gorm.DB {
 		log.Fatal("❌ failed to migrate database:", err)
 	}
 
-	log.Println("🛠️ Database tables migrated successfully")
+	log.Println("🛠️ Database tables migrated successfully (Admin-Backend)")
 
-	// Seed product data
-	SeedProducts(DB)
+	// Seed Admin User
+	SeedAdminUser(DB)
 
 	return DB
 }

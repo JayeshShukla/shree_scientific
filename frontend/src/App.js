@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import A4Form from "./A4Form";
 import Catalog from "./Catalog";
+import AdminLogin from "./AdminLogin";
+import AdminDashboard from "./AdminDashboard";
 
 // --- SHARED COMPONENTS ---
 
@@ -352,6 +354,8 @@ const App = () => {
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/shree" element={<A4Form />} />
         <Route path="/catalog" element={<Catalog />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
