@@ -3,12 +3,9 @@ package services
 import (
 	"backend/models"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/smtp"
 	"os"
-	"path/filepath"
-	"time"
 )
 
 type EmailService struct {
@@ -95,15 +92,6 @@ func (s *EmailService) SendQuotationEmail(order models.Order) error {
 		</html>
 	`, order.SubTotal, order.GrandTotal, order.Phone)
 
-	// Save HTML email locally to a sent_emails folder
-	emailDir := "./sent_emails"
-	if err := os.MkdirAll(emailDir, 0755); err == nil {
-		filename := fmt.Sprintf("quote_%d_%s.html", order.ID, time.Now().Format("20060102_150405"))
-		filePath := filepath.Join(emailDir, filename)
-		_ = ioutil.WriteFile(filePath, []byte(htmlBody), 0644)
-		log.Printf("📥 [EMAIL SERVICE] Saved a copy of quotation email locally: %s", filePath)
-	}
-
 	// Send via SMTP if configuration variables exist
 	if s.SMTPHost != "" && s.Sender != "" {
 		auth := smtp.PlainAuth("", s.Sender, s.Password, s.SMTPHost)
@@ -123,7 +111,7 @@ func (s *EmailService) SendQuotationEmail(order models.Order) error {
 		}
 		log.Printf("📧 [EMAIL SERVICE] Successfully emailed quotation to %s", order.UserEmail)
 	} else {
-		log.Printf("⚠️ [EMAIL SERVICE] SMTP not configured. Skipped sending email to %s (Quotation saved in ./sent_emails)", order.UserEmail)
+		log.Printf("⚠️ [EMAIL SERVICE] SMTP not configured. Skipped sending email to %s", order.UserEmail)
 	}
 
 	return nil

@@ -73,7 +73,7 @@ func (h *OrderHandler) CreateOrderHandler(c *fiber.Ctx) error {
 
 	return c.Status(http.StatusCreated).JSON(fiber.Map{
 		"success": true,
-		"message": "Order placed successfully. Quotation has been generated and queued for email delivery.",
+		"message": "Quotation created successfully. View it in My Quotations to purchase when ready.",
 		"order":   order,
 	})
 }
@@ -95,10 +95,12 @@ func (h *OrderHandler) GetOrdersHandler(c *fiber.Ctx) error {
 		customerID = customerIDVal.(string)
 	}
 
-	orders, err := h.Store.GetOrdersByUser(customerID, email)
+	statusFilter := c.Query("status") // "active", "completed", or empty for all
+
+	orders, err := h.Store.GetOrdersByUser(customerID, email, statusFilter)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(models.Response{
-			Message: "Failed to fetch orders",
+			Message: "Failed to fetch quotations",
 			Success: false,
 		})
 	}
@@ -106,5 +108,91 @@ func (h *OrderHandler) GetOrdersHandler(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"orders":  orders,
+	})
+}
+
+func (h *OrderHandler) PurchaseQuotationHandler(c *fiber.Ctx) error {
+	emailVal := c.Locals("email")
+	customerIDVal := c.Locals("customerId")
+
+	if emailVal == nil {
+		return c.Status(http.StatusUnauthorized).JSON(models.Response{
+			Message: "Unauthorized",
+			Success: false,
+		})
+	}
+	email := emailVal.(string)
+
+	var customerID string
+	if customerIDVal != nil {
+		customerID = customerIDVal.(string)
+	}
+
+	orderID, err := c.ParamsInt("id")
+	if err != nil || orderID <= 0 {
+		return c.Status(http.StatusBadRequest).JSON(models.Response{
+			Message: "Invalid quotation id",
+			Success: false,
+		})
+	}
+
+	order, err := h.Store.CompleteOrder(uint(orderID), customerID, email)
+	if err != nil {
+		log.Printf("❌ [HANDLER] Error completing quotation: %v", err)
+		return c.Status(http.StatusNotFound).JSON(models.Response{
+			Message: "Quotation not found or already purchased",
+			Success: false,
+		})
+	}
+
+	go func(o models.Order) {
+		if err := h.EmailService.SendQuotationEmail(o); err != nil {
+			log.Printf("⚠️ [HANDLER] Failed to send purchase confirmation email: %v", err)
+		}
+	}(order)
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "Purchase confirmed. Quotation moved to completed.",
+		"order":   order,
+	})
+}
+
+func (h *OrderHandler) DeleteQuotationHandler(c *fiber.Ctx) error {
+	emailVal := c.Locals("email")
+	customerIDVal := c.Locals("customerId")
+
+	if emailVal == nil {
+		return c.Status(http.StatusUnauthorized).JSON(models.Response{
+			Message: "Unauthorized",
+			Success: false,
+		})
+	}
+	email := emailVal.(string)
+
+	var customerID string
+	if customerIDVal != nil {
+		customerID = customerIDVal.(string)
+	}
+
+	orderID, err := c.ParamsInt("id")
+	if err != nil || orderID <= 0 {
+		return c.Status(http.StatusBadRequest).JSON(models.Response{
+			Message: "Invalid quotation id",
+			Success: false,
+		})
+	}
+
+	if err := h.Store.DeleteOrder(uint(orderID), customerID, email); err != nil {
+		log.Printf("❌ [HANDLER] Error deleting quotation: %v", err)
+		return c.Status(http.StatusNotFound).JSON(models.Response{
+			Message: "Quotation not found or cannot be deleted",
+			Success: false,
+		})
+	}
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "Quotation deleted successfully.",
 	})
 }

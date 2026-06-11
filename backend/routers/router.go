@@ -23,7 +23,9 @@ func SetupRoutes(app *fiber.App, s *ServerModules) {
 	app.Delete("/api/products/:id", handlers.JWTMiddleware, s.ProductHandler.DeleteProductHandler)
 	app.Post("/api/upload", handlers.JWTMiddleware, s.ProductHandler.UploadImageHandler)
 
-	// Order / Inquiry API endpoints
+	// Order / Quotation API endpoints
 	app.Post("/api/orders", handlers.JWTMiddleware, s.OrderHandler.CreateOrderHandler)
 	app.Get("/api/orders", handlers.JWTMiddleware, s.OrderHandler.GetOrdersHandler)
+	app.Patch("/api/orders/:id/purchase", handlers.JWTMiddleware, s.OrderHandler.PurchaseQuotationHandler)
+	app.Delete("/api/orders/:id", handlers.JWTMiddleware, s.OrderHandler.DeleteQuotationHandler)
 }

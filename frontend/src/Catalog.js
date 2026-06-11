@@ -98,7 +98,7 @@ const Catalog = () => {
           setBag([]);
           setIsBagOpen(false);
           setInquirySuccess(false);
-          navigate("/shree", { state: { order: data.order } });
+          navigate("/quotations");
         }, 1500);
       } else {
         setCheckoutError(data.message || "Failed to process quote inquiry");
@@ -139,8 +139,8 @@ const Catalog = () => {
           </Link>
 
           <div className="flex items-center gap-6">
-            <Link to="/shree" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition">
-              Create Invoice
+            <Link to="/quotations" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition">
+              My Quotations
             </Link>
             
             {/* Inquiry Bag Trigger Button */}
@@ -148,7 +148,7 @@ const Catalog = () => {
               onClick={() => setIsBagOpen(true)}
               className="relative flex items-center gap-2 bg-indigo-50 text-indigo-600 px-4 py-2 rounded-full text-sm font-bold hover:bg-indigo-100 transition"
             >
-              <span>📋 Inquiry List</span>
+              <span>📋 Cart</span>
               {bag.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-indigo-600 text-white w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold animate-pulse">
                   {bag.length}
@@ -357,7 +357,7 @@ const Catalog = () => {
                               : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-100"
                           }`}
                         >
-                          {inBag ? "✓ Added to Inquiry List" : "Add to Inquiry List"}
+                          {inBag ? "✓ In Cart" : "Add to Cart"}
                         </button>
                       </div>
                     </div>
@@ -375,7 +375,7 @@ const Catalog = () => {
           <div className="w-full max-w-md bg-white h-full shadow-2xl p-8 flex flex-col justify-between overflow-y-auto">
             <div>
               <div className="flex justify-between items-center mb-8">
-                <h3 className="text-xl font-black text-slate-900">Your Inquiry List</h3>
+                <h3 className="text-xl font-black text-slate-900">Your Cart</h3>
                 <button
                   onClick={() => setIsBagOpen(false)}
                   className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition"
@@ -424,12 +424,12 @@ const Catalog = () => {
 
                 {inquirySuccess ? (
                   <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl border border-emerald-100 text-center font-bold text-sm">
-                    🎉 Quote Inquiry Sent Successfully! Our staff will email you details shortly.
+                    🎉 Quotation created! Redirecting to your quotation list...
                   </div>
                 ) : (
                   <form onSubmit={handleSendInquiry} className="space-y-4">
                     <p className="text-xs text-slate-500 leading-relaxed">
-                      By submitting, this official quotation will be registered in your account and automatically sent to your school's registered email.
+                      Submitting creates a quotation (not a purchase). You can review and purchase from My Quotations when ready.
                     </p>
                     {checkoutError && (
                       <div className="bg-red-50 text-red-600 p-2.5 rounded-xl border border-red-100 text-center text-xs font-semibold">
@@ -437,7 +437,7 @@ const Catalog = () => {
                       </div>
                     )}
                     <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition text-xs shadow-lg shadow-indigo-100">
-                      Submit Official Quote Request & Generate Invoice
+                      Create Quotation from Cart
                     </button>
                   </form>
                 )}

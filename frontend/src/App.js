@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import A4Form from "./A4Form";
 import Catalog from "./Catalog";
+import Quotations from "./Quotations";
 import AdminLogin from "./AdminLogin";
 import AdminDashboard from "./AdminDashboard";
 
@@ -311,9 +312,12 @@ const UserDashboard = () => {
         >
           Browse Product Catalog
         </button>
-        <div className="bg-slate-800 text-white p-3 rounded-lg cursor-pointer">
-          My Invoices
-        </div>
+        <button
+          onClick={() => navigate("/quotations")}
+          className="bg-slate-800 text-white p-3 rounded-lg cursor-pointer text-left w-full hover:bg-slate-700 transition"
+        >
+          My Quotations
+        </button>
         <div className="p-3 hover:bg-slate-800 rounded-lg cursor-pointer">
           Support
         </div>
@@ -327,14 +331,22 @@ const UserDashboard = () => {
       <div className="flex-1 p-12 flex flex-col items-center justify-center text-center">
         <h2 className="text-3xl font-black text-slate-850 mb-4">Welcome to Shree Scientific Center</h2>
         <p className="text-slate-400 max-w-md mb-8 text-sm">
-          Browse our full list of scientific lab equipment and request custom quotations directly for your school.
+          Browse lab equipment, build a cart to create quotations, and purchase when your school is ready.
         </p>
-        <button
-          onClick={() => navigate("/catalog")}
-          className="bg-indigo-600 text-white font-bold px-8 py-3 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-100"
-        >
-          Go to Product Catalog
-        </button>
+        <div className="flex flex-wrap gap-4 justify-center">
+          <button
+            onClick={() => navigate("/catalog")}
+            className="bg-indigo-600 text-white font-bold px-8 py-3 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-100"
+          >
+            Go to Product Catalog
+          </button>
+          <button
+            onClick={() => navigate("/quotations")}
+            className="bg-white border border-slate-200 text-slate-900 font-bold px-8 py-3 rounded-full hover:bg-slate-50 transition"
+          >
+            View My Quotations
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -354,6 +366,7 @@ const App = () => {
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/shree" element={<A4Form />} />
         <Route path="/catalog" element={<Catalog />} />
+        <Route path="/quotations" element={<Quotations />} />
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>

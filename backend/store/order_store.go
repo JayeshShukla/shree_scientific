@@ -43,7 +43,15 @@ func (s *OrderStore) CreateOrder(customerID string, email string, itemsReq []mod
 	order.SchoolCity = profile.SchoolCity
 	order.SchoolBoard = profile.SchoolBoard
 	order.Phone = profile.Phone
-	order.Status = "pending"
+	order.Status = "quotation"
+
+	var activeCount int64
+	if err := s.db.Model(&models.Order{}).
+		Where("customer_id = ? AND status IN ?", customerID, []string{"quotation", "pending"}).
+		Count(&activeCount).Error; err != nil {
+		return order, err
+	}
+	order.QuotationNo = int(activeCount) + 1
 
 	var subTotal float64
 
@@ -84,13 +92,77 @@ func (s *OrderStore) CreateOrder(customerID string, email string, itemsReq []mod
 	return order, err
 }
 
-func (s *OrderStore) GetOrdersByUser(customerID string, email string) ([]models.Order, error) {
+func (s *OrderStore) GetOrdersByUser(customerID string, email string, statusFilter string) ([]models.Order, error) {
 	var orders []models.Order
-	var err error
+	query := s.db.Preload("Items")
 	if customerID != "" {
-		err = s.db.Preload("Items").Where("customer_id = ?", customerID).Find(&orders).Error
+		query = query.Where("customer_id = ?", customerID)
 	} else {
-		err = s.db.Preload("Items").Where("user_email = ?", email).Find(&orders).Error
+		query = query.Where("user_email = ?", email)
 	}
+
+	switch statusFilter {
+	case "active":
+		query = query.Where("status IN ?", []string{"quotation", "pending"})
+	case "completed":
+		query = query.Where("status = ?", "completed")
+	}
+
+	err := query.Order("created_at DESC").Find(&orders).Error
 	return orders, err
+}
+
+func (s *OrderStore) CompleteOrder(orderID uint, customerID string, email string) (models.Order, error) {
+	var order models.Order
+	q := s.db.Preload("Items")
+	if customerID != "" {
+		q = q.Where("customer_id = ? AND id = ?", customerID, orderID)
+	} else {
+		q = q.Where("user_email = ? AND id = ?", email, orderID)
+	}
+	if err := q.First(&order).Error; err != nil {
+		return order, err
+	}
+
+	if order.Status == "completed" {
+		return order, gorm.ErrRecordNotFound // treat as already done
+	}
+
+	var completedCount int64
+	if err := s.db.Model(&models.Order{}).
+		Where("customer_id = ? AND status = ?", order.CustomerID, "completed").
+		Count(&completedCount).Error; err != nil {
+		return order, err
+	}
+
+	order.Status = "completed"
+	order.QuotationNo = int(completedCount) + 1
+	if err := s.db.Save(&order).Error; err != nil {
+		return order, err
+	}
+	return order, nil
+}
+
+func (s *OrderStore) DeleteOrder(orderID uint, customerID string, email string) error {
+	var order models.Order
+	q := s.db
+	if customerID != "" {
+		q = q.Where("customer_id = ? AND id = ?", customerID, orderID)
+	} else {
+		q = q.Where("user_email = ? AND id = ?", email, orderID)
+	}
+	if err := q.First(&order).Error; err != nil {
+		return err
+	}
+
+	if order.Status == "completed" {
+		return gorm.ErrRecordNotFound
+	}
+
+	return s.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("order_id = ?", order.ID).Delete(&models.OrderItem{}).Error; err != nil {
+			return err
+		}
+		return tx.Delete(&order).Error
+	})
 }
